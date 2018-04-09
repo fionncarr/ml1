@@ -12,6 +12,7 @@ onehot:{eye[count d](d:asc distinct x)?x}
 
 tmconv:{@[x;where dtypes[x]in 12 13 14 16 17 18 19h;"j"$]}
 enum:{@[x;c;?[distinct raze x c:where 11=dtypes x]]}
+rmtrivial:{(where 1<('[count;distinct]each flip x))#x}
 transform:{@[;where t in 12 13 14 16 17 18 19h;"j"$]@[x;c;?[distinct raze x c:where 11=t:dtypes x]]}
 / apply:{[f;x]$[type[x]in 0 98h;f x;first f enlist x]} / remove?
 
@@ -40,8 +41,7 @@ rocaucscore:{[y;p]auc . curvepts . roc[y;p]}
 \
 / still todo
 seq:{x+z*til ceiling(1+y-x)%z}
-percentile:{[x;k]s:asc x;n:count x;$[0=index-i:`int$index:n*k;$[0= n mod 2;avg s@(i;i-1);s i-1];s[i-1]+(index-i)*.[-;s@(i;i-1)]]} 
-describe:{[data]`description xkey update description:`count`mean`std`min`q1`q2`q3`max from flip(count;avg;dev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/: flip data}
-/returns evenly spaced numbers over a specified interval. x=start,y=stop,s:num of samples to generate
 linspace:{[x;y;s]x+z*til ceiling(1+y-x)%z:(y-x)%s-1}
+percentile:{r[0]+(p-i 0)*last r:0^deltas x iasc[x]i:0 1+\:floor p:y*-1+count x}
+describe:{[data]`description xkey update description:`count`mean`std`min`q1`q2`q3`max from flip(count;avg;dev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/: flip data}
 tokenizer:{til[x]in y}
