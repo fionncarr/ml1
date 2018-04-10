@@ -11,7 +11,7 @@ df2tab:{
 arange:{x+z*til ceiling(y-x)%z}
 linspace:{x+til[z]*(y-x)%z-1}
 
-shape:{-1_count each first scan x} 
+shape:{-1_count each first scan x}
 dtypes:{type each$[98=type x;flip;]x}
 round:{y*"j"$x%y}
 range:{max[x]-min x}
@@ -19,8 +19,9 @@ percentile:{r[0]+(p-i 0)*last r:0^deltas x iasc[x]i:0 1+\:floor p:y*-1+count x}
 
 describe:{`count`mean`std`min`q1`q2`q3`max!flip(count;avg;dev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/:flip(exec c from meta[x]where t in"hijefpmdznuvt")#x}
 
-traintestsplit:{[x;y;sz]`xtrain`ytrain`xtest`ytest!raze(x;y)@\:/:(0,floor n*1-sz)_neg[n]?n:count x};
-minmaxscaler:{{(z-x)%y}[mnx;max[x]-mnx:min x]each x} 
+traintestsplit:{[x;y;sz]`xtrain`ytrain`xtest`ytest!raze(x;y)@\:/:(0,floor n*1-sz)_neg[n]?n:count x}
+minmaxscaler:{{(z-x)%y}[mnx;max[x]-mnx:min x]each x}
+stdscaler:{(x-avg x)%dev x}
 eye:{@[x#0.;;:;1.]each til x}
 onehot:{eye[count d](d:asc distinct x)?x}
 
