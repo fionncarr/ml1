@@ -39,6 +39,7 @@ precision:('[{x[`tp]%sum x`tp`fp};confdict])
 sensitivity:('[{x[`tp]%sum x`tp`fn};confdict])
 specificity:('[{x[`tn]%sum x`tn`fp};confdict])
 
+sse:{d$d:x-y}
 mse:{avg d*d:x-y}
 accuracy:{avg x=y}
 
