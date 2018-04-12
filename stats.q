@@ -33,13 +33,14 @@ transform:{@[;where t in 12 13 14 16 17 18 19h;"j"$]@[x;c;?[distinct raze x c:wh
 tscore:{[x;mu](avg[x]-mu)%sdev[x]%sqrt count x}
 tscoreeq:{abs[avg[x]-avg y]%sqrt(svar[x]%count x)+svar[y]%count y}
 
-confusion:{d:$[b:x~(::);asc distinct y,z;10b];0^(d!(n;n:count d)#0),exec(count each group c2)d by c1 from $[b;;x=]([]c1:y;c2:z)}
-confdict:{`tp`fn`fp`tn!raze value confusion[x;y;z]}
+corrmat:{x cor/:\:$[t;value;]x:$[t:98=type x;flip;]x}
+confmat:{d:$[b:x~(::);asc distinct y,z;10b];0^(d!(n;n:count d)#0),exec(count each group c2)d by c1 from $[b;;x=]([]c1:y;c2:z)}
+confdict:{`tp`fn`fp`tn!raze value confmat[x;y;z]}
 precision:('[{x[`tp]%sum x`tp`fp};confdict])
 sensitivity:('[{x[`tp]%sum x`tp`fn};confdict])
 specificity:('[{x[`tn]%sum x`tn`fp};confdict])
 
-sse:{d$d:x-y}
+sse:{sum d*d:x-y}
 mse:{avg d*d:x-y}
 accuracy:{avg x=y}
 
