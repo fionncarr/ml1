@@ -1,4 +1,5 @@
 \l p.q
+\d .ml
 
 /
 The following are numpy and scipy modules which were used in the place of q code
@@ -19,13 +20,8 @@ These functions are as follows; max,min,sum,median=med,mean=avg,length=count,std
 may need to be added to the 'actual' script 
 \
 
-shape:{-1_count each first scan x}
-size:{(*/)shape x}
-arange:{x+z*til ceiling(y-x)%z}
 getmoment:{(x$("f"$arange[0;count x;1])xexp y)%(sum x)} /x=data;y=exp
 hist:{(count each value(asc key g)#g:group(-1_a)bin x;a:min[x]+til[1+y]*(max[x]-min x)%y)} /x=data;y=#bins
-
-absenergy:{sum x*x}
 
 valcount:{sum x=y}
 countabovemean:{sum x>avg x} 
@@ -37,45 +33,45 @@ firstmax:{x?max x}
 firstmin:{x?min x} 
 lastmax:{last where x=max x}
 lastmin:{last where x=min x}
-hasdup:{(count x)<>count(distinct x)}
+hasdup:{count[x]<>count distinct x}
 hasdupmax:{1<sum x=max x}
 hasdupmin:{1<sum x=min x}
 
-sumrecurringdatapoint:{sum k*g k:where 1< g:count each group x}
+sumrecurringdatapoint:{sum k*g k:where 1<g:count each group x}
 sumrecurringval:{sum where 1<count each group x}
 
-aggonchunk:{y each z cut x} /x:array;y:agg function; z: chunk length 
-
+/ swap these?
 perrecurtoalldata:{sum[1<g]%count g:count each group x}
 perrecurtoallval:{sum[g where 1<g:count each group x]%count x}
 
-ratiovalnumtserieslength: {(count distinct x)%count x}
-ratiobeyondrsigma:{sum[((abs (x-avg[x]))>y*dev x)]%size[x]}
+ratiovalnumtserieslength:{count[distinct x]%count x}
+ratiobeyondrsigma:{sum[abs[x-avg x]>y*dev x]%count x}
 
-meanchange:{avg 1_deltas x}
+meanchange:{(x[i]-x 0)%i:count[x]-1}
 meanabschange:{avg abs 1_deltas x}
 abssumchange:{sum abs 1_deltas x}
-mean2dercentral:{dif:(xprev[-1;x]+xprev[1;x]-2*x)%2.0;avg dif}
+mean2dercentral:{avg(.5*sum xprev\:[-1 1;x])-x}
 
-varlargerstd:{(var x)>1}
-largestdev:{(dev x)>y*max[x]-min x}
+varlargerstd:{1<var x}
+largestdev:{dev[x]>y*range x}
 
-getlenseqwhere:{(sum each where[differ x]_x)except 0}
-longstrikelessmean:{max getlenseqwhere[x<avg x]}
-longstrikegreatermean:{max getlenseqwhere[x>avg x]}
+getlenseqwhere:{(1_deltas i,count x)where x i:where differ x}
+longstrikelessmean:{max getlenseqwhere x<avg x}
+longstrikegreatermean:{max getlenseqwhere x>avg x}
 
-cidce:{sqrt k$k:"f"$1_deltas$[y;[if[0=s:dev x;:0.];(x-avg x)%s];x]}
-c3:{$[y>=0.5*n:count x;0f;avg prd xprev[;x]each 0 -1 -2*y]}
+cidce:{sqrt .ml.ssq 1_deltas x}
+cidceN:{$[0=s:dev x;0.;cidce(x-avg x)%s]}
+c3:{0^avg x*prd xprev\:[-1 -2*y;x]}
 
-treverseasymstat:{$[y>=0.5*n:count x;0;avg(x2*(x2:xprev[-2*y]x)*x1)-(x1:xprev[-1*y]x)*x*x]}
-symmetrylookup:{abs[avg[x]-med x] > y*max[x]-min x}
+treverseasymstat:{0^avg(x1*x2*x2:xprev[-2*y]x)-x*x*x1:xprev[-1*y]x}
+symmetrylookup:{abs[avg[x]-med x]>y*range x}
 
-quantile:{r[0]+(p-i 0)*last r:0^deltas x iasc[x]i:0 1+\:floor p:y*-1+count x}
+quantile:percentile / remove and just use percentile?
 
-autocorr:{$[y>k:count x;0n;(sum(((neg y)_n)*(y _ n:x-avg x)))%((k-y)*var x)]}
+autocorr:{(avg(x-m)*xprev[y;x]-m:avg x)%var x}
 
-skewness:{((sqrt n*n-1)*(n xexp 1.5)*sum(m*m*m))%((n*n:count x-2)*((sum(m*m:x-avg x))xexp 1.5))}
-kurtosis:{(((n+1)*n*(n-1)*sum k2*k2)%((n-3)*(n-2)*(sum k2)*(sum k2:k*k:x-avg x)))-(((3*(n-1)*(n-1))%((n-2)*((n:count x)-3))))}
+skewness:{n*sum[m*m*m:x-avg x]%(s*s*s:sdev x)*(n-1)*-2+n:count x}
+kurtosis:{((n-1)%(n-2)*n-3)*((n+1)*n*sum[k2*k2]%s*s:sum k2:k*k:x-avg x)+3*1-n:count x}
 
 numcwtpeaks:{count(findpeak[x;arange[1;y+1;1]]`)} / 'ricker wavelet specification removed... it is default in find_peak_cwt
 
@@ -95,10 +91,11 @@ lintrend:{
         r:slope,intercept,rval,p,stderr
         }
 
+aggonchunk:{y each z cut x} /x:array;y:agg function; z: chunk length 
 linagg:{xnew:aggonchunk[x;y;z];lintrend[til (count xnew)-1;-1_xnew]}
 
 /x=data;y=#chunks;z=focus chunk
-eratiobychunk:{val:("i"$floor((count x)%y)) cut x;[sum valfocus*valfocus:val[z]]%absenergy[x]}
+eratiobychunk:{val:("i"$floor((count x)%y)) cut x;[sum valfocus*valfocus:val[z]]%ssq x}
 
 changequant:{[x;ql;qh;isabs;aggfn]
 	if[ql~qh;:0];

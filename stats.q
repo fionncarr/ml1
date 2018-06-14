@@ -12,6 +12,7 @@ arange:{x+z*til ceiling(y-x)%z}
 linspace:{x+til[z]*(y-x)%z-1}
 
 shape:{-1_count each first scan x}
+size:prd shape@
 dtypes:{type each$[98=type x;flip;]x}
 round:{y*"j"$x%y}
 range:{max[x]-min x}
@@ -40,6 +41,8 @@ precision:('[{x[`tp]%sum x`tp`fp};confdict])
 sensitivity:('[{x[`tp]%sum x`tp`fn};confdict])
 specificity:('[{x[`tn]%sum x`tn`fp};confdict])
 
+ssq:{$[type[x]in 8 9h;x$x;sum x*x]}
+msq:{ssq[x]%count x}
 sse:{sum d*d:x-y}
 mse:{avg d*d:x-y}
 accuracy:{avg x=y}
