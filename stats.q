@@ -16,7 +16,6 @@ linspace:{x+til[z]*(y-x)%z-1} / z evenly spaced values between x and y
 
 shape:{-1_count each first scan x} / shape of a list
 dtypes:{type each$[98=type x;flip;]x} / datatypes of table columns or dictionary values
-round:{y*"j"$x%y} / 
 range:{max[x]-min x} / range of a list
 percentile:{r[0]+(p-i 0)*last r:0^deltas x iasc[x]i:0 1+\:floor p:y*-1+count x} / percentile y of list x
 
@@ -57,5 +56,5 @@ crossentropy:{avg neg eye[count y 0][x]*log y|EPS}
 
 curvepts:{(x;y)@\:where(1_differ deltas[y]%deltas x),1b} / points in the ROC curve
 auc:{sum 1_deltas[x]*y-.5*deltas y} / area under the curve with points of coordinates (x,y)
-roc:{[y;p]{x%last x}each value exec 1+i-y,y from(update sums y from`p xdesc([]y;p))where p<>next p} / increasing false positive rates and true negatives rates for ROC curve
+roc:{[y;p]{x%last x}each value exec 1+i-y,y from(update sums y from`p xdesc([]y;p))where p<>next p} / increasing false positive rates and true negatives rates to get the ROC curve
 rocaucscore:{[y;p]auc . curvepts . roc[y;p]} / area under the ROC curve. x is the actual class and p the probability of belonging to the positive class
