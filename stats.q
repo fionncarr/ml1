@@ -1,52 +1,47 @@
-\l p.q
 \d .ml
-
-/ q table to pandas dataframe
-tab2df:{
-  r:.p.import[`pandas;`:DataFrame.from_dict;flip 0!x][@;cols x];
-  $[count k:keys x;r[`:set_index]k;r]}
-/ pandas dataframe to q table
-df2tab:{
-  n:$[.p.isinstance[x`:index;.p.import[`pandas]`:RangeIndex]`;0;x[`:index.nlevels]`];
-  n!flip $[n;x[`:reset_index][];x][`:to_dict;`list]`}
-
-
-arange:{x+z*til ceiling(y-x)%z} / evenly spaced values between x and y in steps of length z.
-linspace:{x+til[z]*(y-x)%z-1} / z evenly spaced values between x and y
+/ evenly spaced values between x and y in steps of length z
+arange:{x+z*til ceiling(y-x)%z}
+/ z evenly spaced values between x and y
+linspace:{x+til[z]*(y-x)%z-1}
 
 shape:{-1_count each first scan x} / shape of a list
-dtypes:{type each$[98=type x;flip;]x} / datatypes of table columns or dictionary values
 range:{max[x]-min x} / range of a list
 percentile:{r[0]+(p-i 0)*last r:0^deltas x iasc[x]i:0 1+\:floor p:y*-1+count x} / percentile y of list x
 
 / descriptive statistics of the table columns
 describe:{`count`mean`std`min`q1`q2`q3`max!flip(count;avg;dev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/:flip(exec c from meta[x]where t in"hijefpmdznuvt")#x}
 
+/ split data into training and test sets, x features, y labels, z proportion of data to reserve for test
+traintestsplit:{`xtrain`ytrain`xtest`ytest!raze(x;y)@\:/:(0,floor n*1-z)_neg[n]?n:count x}
+/ scale data between 0 and 1
+minmaxscaler:{{(z-x)%y}[mnx;max[x]-mnx:min x]each x}
+/ standardize data
+stdscaler:{(x-avg x)%dev x}
+/ identity matrix of size x
+eye:{@[x#0.;;:;1.]each til x}
+/ one hote encode list of values
+onehot:{eye[count d](d:asc distinct x)?x}
 
-traintestsplit:{[x;y;sz]`xtrain`ytrain`xtest`ytest!raze(x;y)@\:/:(0,floor n*1-sz)_neg[n]?n:count x} / split data into training and test sets. sz is the proportion of the data to include in the test set
-minmaxscaler:{{(z-x)%y}[mnx;max[x]-mnx:min x]each x} / scale data between 0 and 1
-stdscaler:{(x-avg x)%dev x} / remove the mean and standarize data by the standard deviation
-eye:{@[x#0.;;:;1.]each til x} / identity matrix of size x 
-onehot:{eye[count d](d:asc distinct x)?x} / encode a list of integers using one-hot encoding
+/ t-score for a t test (one sample)
+tscore:{[x;mu](avg[x]-mu)%sdev[x]%sqrt count x}
+/ t-score for t-test (two independent samples, not equal variances
+tscoreeq:{abs[avg[x]-avg y]%sqrt(svar[x]%count x)+svar[y]%count y}
 
-tmconv:{@[x;where dtypes[x]in 12 13 14 16 17 18 19h;"j"$]} / convert times to integers
-enum:{@[x;c;?[distinct raze x c:where 11=dtypes x]]} / encode symbol columns in a table as integers. Each distinct symbol in the table maps to an integer
-rmtrivial:{(where(1<count distinct@)each flip x)#x} / drop columns with just 1 distinct value
-transform:{@[;where t in 12 13 14 16 17 18 19h;"j"$]@[x;c;?[distinct raze x c:where 11=t:dtypes x]]} / convert times to integers and encode symbol columns as integers
-
-tscore:{[x;mu](avg[x]-mu)%sdev[x]%sqrt count x} / t-score for a t test (one sample)
-tscoreeq:{abs[avg[x]-avg y]%sqrt(svar[x]%count x)+svar[y]%count y} / t-score for t-test (two independent samples, not equal varainces)
-
-corrmat:{x cor/:\:$[t;value;]x:$[t:98=type x;flip;]x} / correlation matrix
-confmat:{d:$[b:x~(::);asc distinct y,z;10b];0^(d!(n;n:count d)#0),exec(count each group c2)d by c1 from $[b;;x=]([]c1:y;c2:z)} / confusion matrix. x is the positive class,y should be the actual classes and z the predictions
-confdict:{`tp`fn`fp`tn!raze value confmat[x;y;z]} / number of TP,FN,FP,TN.
-precision:('[{x[`tp]%sum x`tp`fp};confdict]) / positive predictive value
-sensitivity:('[{x[`tp]%sum x`tp`fn};confdict]) / true positive rate
-specificity:('[{x[`tn]%sum x`tn`fp};confdict]) / true negative rate
-
-sse:{sum d*d:x-y} / sum of squared errors
-mse:{avg d*d:x-y} / mean of squared errors
-accuracy:{avg x=y} / accuracy score
+/ covariance/correlation calculate upper triangle only
+cvm:{(x+flip(not n=\:n)*x:(n#'0.0),'(x$/:'(n:til count x)_\:x)%count first x)-a*\:a:avg each x:"f"$x}
+crm:{cvm[x]%u*/:u:dev each x}
+/ correlation matrix, in dictionary format if input is a table
+corrmat:{$[t;{x!x!/:y}cols x;]crm$[t:98=type x;value flip@;]x}
+/ confusion matrix, x predicted class, y actual class
+confmat:{cs:asc distinct y;exec 0^(count each group pred)cs by label from([]pred:x;label:y)}
+accuracy:{avg x=y}
+/ x predictions, y labels, z positive predicted label precision,sensitivity(recall), specificity
+precision:{sum[u&x=y]%sum u:x=z}
+sensitivity:{sum[(x=z)&x=y]%sum y=z}
+specificity:{sum[u&x=y]%sum u:y<>z}
+/ sum squared and mean squared error
+sse:{sum d*d:x-y}
+mse:{avg d*d:x-y}
 
 EPS:1e-15
 / special case for binary classification, x(actual class) should be 0 or 1; y should be the probability of belonging to class 0 or 1 for each instance
