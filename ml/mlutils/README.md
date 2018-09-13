@@ -4,34 +4,14 @@ The functions contained in this folder constitute a set of functions which are u
 ## Functionality
 Within the folder mlutils are 4 scripts which deal with different aspects of machine learning and the functions that have been produced to aid the kdb+/q user in applying machine learning procedures to their datasets
 
-1. Statistical functions for testing the accuracy of machine learning procedures including but not limited to;
-  1. Confusion matrices
-  2. t-score
-  3. Logloss
-  4. Specificity 
-  5. Accuracy
+1. Statistical functions for testing the accuracy of machine learning procedures including but not limited to, confusion matrices, t-score, logloss, specificity and accuracy
 
-2. Preprocessing functions for the manipulation of data prior to the application of machine learning algotithms. These include;
-  1. Tailored filling of data (linear/mean/median/zero and forward filling).
-  2. Interpolation including fill type and linear.
-  3. One hot encoding.
-  4. Removal of zero variance features from data.
-  5. Creation of polynomial features.
-  6. Production of rolled forecasting frame tables.
+2. Preprocessing functions for the manipulation of data prior to the application of machine learning algotithms. These include, tailored filling of data (linear/mean/median/zero and forward filling), interpolation (fill type or linear), one hot encoding, removal of zero variance features from data, creation of polynomial features and the production of rolled forecasting frame tables.
 
-3. Graphical functions are provided to allow using a number of statistical functions above a user to create;
-  1. ROC Curves.
-  2. Confusion matrices.
-  3. Cross Entropy vs Epoch.
-  4. MSE vs Epoch.
+3. Graphical functions are provided to allow using a number of statistical functions above a user to create, ROC curves, confusion matrices, cross entropy vs epoch and MSE vs Epoch.
 
-4. Finally within mlutils, funcs.q contains functions found to be commonly used in ML applications;
-  1. Conversion of time data value to longs such that they can be used as features.
-  2. Enumeration of symbols.
-  3. Converstion of q tables to pandas dataframes and vice-versa.
-  4. Train test split functions both seeded and unseeded.
-  5. Functions for checking datatypes, producing arrays and checking matrices properties
-
+4. Finally within mlutils, funcs.q contains functions found to be commonly used in ML applications, conversion of time data value to longs such that they can be used as features, enumeration of symbols, converstion of q tables to pandas dataframes (and vice-versa), train-test split functions (seeded/unseeded), functions for checking datatypes, producing arrays and checking matrices properties
+  
 The functions which are currently contained in these scripts are by no means exhaustive and will be added to on an ongoing basis.
 ## Requirements
 
