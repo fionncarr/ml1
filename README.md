@@ -15,8 +15,9 @@ The contents of both sections are explained in greater depth within their indivi
 - scikit-learn
 - scipy = 1.0.0
 - statsmodels
+- matplotlib
 
-Numpy and scipy can be installed via:
+These python dependancies can be installed via:
 
 pip:
 ```bash
