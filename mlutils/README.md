@@ -2,13 +2,15 @@
 ## Introduction
 The functions contained in this folder constitute a set of functions which are used extensively in machine learning applications. These range from functions for the linear interpolation of data to allow for equi-spaced time to be enforced on the data to statistical functions such as calculations of sensitivity or specificity.
 ## Functionality
-Within the folder mlutils are 3 scripts which deal with different aspects of machine learning and the functions that have been produced to aid the kdb+/q user in applying machine learning procedures to their datasets
+Within the folder mlutils are 4 scripts which deal with different aspects of machine learning and the functions that have been produced to aid the kdb+/q user in applying machine learning procedures to their datasets
 
 1. Statistical functions for testing the accuracy of machine learning procedures including but not limited to, confusion matrices, t-score, logloss, specificity and accuracy
 
 2. Preprocessing functions for the manipulation of data prior to the application of machine learning algotithms. These include, tailored filling of data (linear/mean/median/zero and forward filling), interpolation (fill type or linear), one hot encoding, removal of zero variance features from data, creation of polynomial features and the production of rolled forecasting frame tables.
 
-3. Finally within mlutils, funcs.q contains functions found to be commonly used in ML applications, conversion of time data value to longs such that they can be used as features, enumeration of symbols, converstion of q tables to pandas dataframes (and vice-versa), train-test split functions (seeded/unseeded), functions for checking datatypes, producing arrays and checking matrices properties
+3. Graphical functions are provided to allow using a number of statistical functions above a user to create, ROC curves, confusion matrices, cross entropy vs epoch and MSE vs Epoch.
+
+4. Finally within mlutils, funcs.q contains functions found to be commonly used in ML applications, conversion of time data value to longs such that they can be used as features, enumeration of symbols, converstion of q tables to pandas dataframes (and vice-versa), train-test split functions (seeded/unseeded), functions for checking datatypes, producing arrays and checking matrices properties
   
 The functions which are currently contained in these scripts are by no means exhaustive and will be added to on an ongoing basis.
 ## Requirements

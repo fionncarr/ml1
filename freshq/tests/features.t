@@ -122,17 +122,17 @@ np:.p.import[`numpy]
 .fresh.feat.autocorr[xfloat;5] ~ autocorrelation[xfloat;5]
 .fresh.feat.autocorr[xint;50] ~ autocorrelation[xint;50]
 
-.fresh.aggonchunk[xint;avg;50] ~ aggregate_on_chunks[xint;`mean;50]
-.fresh.aggonchunk[xint;min;50] ~ aggregate_on_chunks[xint;`min;50]
-.fresh.aggonchunk[xint;max;50] ~ aggregate_on_chunks[xint;`max;50]
-.fresh.aggonchunk[xint;dev;50] ~ aggregate_on_chunks[xint;`std;50]
-.fresh.aggonchunk[xint;var;50] ~ aggregate_on_chunks[xint;`var;50]
+(.fresh.aggonchunk[xint;50]`avg) ~ aggregate_on_chunks[xint;`mean;50]
+(.fresh.aggonchunk[xint;50]`min) ~ aggregate_on_chunks[xint;`min;50]
+(.fresh.aggonchunk[xint;50]`max) ~ aggregate_on_chunks[xint;`max;50]
+(.fresh.aggonchunk[xint;50]`dev) ~ aggregate_on_chunks[xint;`std;50]
+(.fresh.aggonchunk[xint;50]`var) ~ aggregate_on_chunks[xint;`var;50]
 
-.fresh.aggonchunk[xfloat;avg;50] ~ aggregate_on_chunks[xfloat;`mean;50]
-.fresh.aggonchunk[xfloat;min;50] ~ aggregate_on_chunks[xfloat;`min;50]
-.fresh.aggonchunk[xfloat;max;50] ~ aggregate_on_chunks[xfloat;`max;50]
-.fresh.aggonchunk[xfloat;dev;50] ~ aggregate_on_chunks[xfloat;`std;50]
-.fresh.aggonchunk[xfloat;var;50] ~ aggregate_on_chunks[xfloat;`var;50]
+(.fresh.aggonchunk[xfloat;50]`avg) ~ aggregate_on_chunks[xfloat;`mean;50]
+(.fresh.aggonchunk[xfloat;50]`min) ~ aggregate_on_chunks[xfloat;`min;50]
+(.fresh.aggonchunk[xfloat;50]`max) ~ aggregate_on_chunks[xfloat;`max;50]
+(.fresh.aggonchunk[xfloat;50]`dev) ~ aggregate_on_chunks[xfloat;`std;50]
+(.fresh.aggonchunk[xfloat;50]`var) ~ aggregate_on_chunks[xfloat;`var;50]
 
 .fresh.feat.numpeaks[xint;4] ~ "i"$number_peaks[xint;4]
 .fresh.feat.numpeaks[xint;1] ~ "i"$number_peaks[xint;1]
@@ -145,17 +145,9 @@ np:.p.import[`numpy]
 .fresh.feat.treverseasymstat[xint;4] ~ time_reversal_asymmetry_statistic[xint;4]
 .fresh.feat.treverseasymstat[xfloat;2] ~ time_reversal_asymmetry_statistic[xfloat;2]
 
-.fresh.feat.changequant[xfloat;0.2;0.8;1b;max] ~ change_quantiles[xfloat;0.2;0.8;1b;`max]
-.fresh.feat.changequant[xfloat;0.25;0.7;1b;min] ~ change_quantiles[xfloat;0.2;0.7;1b;`min]
-.fresh.feat.changequant[xfloat;0.2;0.65;1b;var] ~ change_quantiles[xfloat;0.2;0.65;1b;`var]
-.fresh.feat.changequant[xfloat;0.2;0.775;1b;dev] ~ change_quantiles[xfloat;0.2;0.775;1b;`std]
-.fresh.feat.changequant[xfloat;0.2;0.7;1b;avg] ~ change_quantiles[xfloat;0.2;0.7;1b;`mean]
-.fresh.feat.changequant[xfloat;0.2;0.8;0b;max] ~ change_quantiles[xfloat;0.2;0.8;0b;`max]
-.fresh.feat.changequant[xfloat;0.2;0.7;0b;min] ~ change_quantiles[xfloat;0.2;0.7;0b;`min]
-.fresh.feat.changequant[xfloat;0.2;0.7;0b;var] ~ change_quantiles[xfloat;0.2;0.7;0b;`var]
-.fresh.feat.changequant[xfloat;0.2;0.7;0b;dev] ~ change_quantiles[xfloat;0.2;0.7;0b;`std]
-.fresh.feat.changequant[xfloat;0.2;0.7;0b;avg] ~ change_quantiles[xfloat;0.2;0.7;0b;`mean]
-.fresh.feat.changequant[xfloat;0.2;0.8;1b;max] ~ change_quantiles[xfloat;0.2;0.8;1b;`max]
+(value .fresh.feat.changequant[xfloat;0.2;0.8;1b]) ~ change_quantiles[xfloat;0.2;0.8;1b;]each `max`min`mean`var`std
+(value .fresh.feat.changequant[xfloat;0.25;0.7;1b]) ~ change_quantiles[xfloat;0.25;0.7;1b;]each `max`min`mean`var`std
+(value .fresh.feat.changequant[xfloat;0.3;0.775;1b]) ~ change_quantiles[xfloat;0.3;0.775;1b;]each `max`min`mean`var`std
 
 (.fresh.feat.lintrend[xint]`slope) ~ linear_trend[xint][0]
 (.fresh.feat.lintrend[xint]`intercept) ~ linear_trend[xint][1]
@@ -168,8 +160,8 @@ np:.p.import[`numpy]
 (.fresh.feat.lintrend[xfloat]`p) ~ linear_trend[xfloat][3]
 (.fresh.feat.lintrend[xfloat]`stderr) ~ linear_trend[xfloat][4]
 
-(value .fresh.aggautocorr[xint;`mean`variance`median`stdev]) ~ agg_autocorrelation[xint;]each `mean`var`median`std
-(value .fresh.aggautocorr[xfloat;`mean`variance`median`stdev]) ~ agg_autocorrelation[xfloat;]each `mean`var`median`std
+(value .fresh.feat.aggautocorr[xint])~"f"$agg_autocorrelation[xint;]each `mean`median`var`std
+(value .fresh.feat.aggautocorr[xfloat])~"f"$agg_autocorrelation[xfloat;]each `mean`median`var`std
 
 (.fresh.fftaggreg[xint]`centroid) ~ fft_aggregated[xint][0]
 (.fresh.fftaggreg[xint]`variance) ~ fft_aggregated[xint][1]
