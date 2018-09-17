@@ -22,7 +22,7 @@ q)targets:closes>prev closes
 \
 
 \l ml/init.q
-
+\l graphics.q
 -1"\n------------------------------";
 -1 "Ready for feature extraction to take place, please load in your table, assign your target and choose your id column";
 -1"------------------------------\n";
