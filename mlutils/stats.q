@@ -2,8 +2,8 @@
 
 accuracy:{avg x=y}
 / sum squared and mean squared error
-mse:{avg d*d:x-y}
-sse:{sum d*d:x-y}
+mse:{avg d*d:x-y} / mean of squared errors
+sse:{sum d*d:x-y} / sum of squared errors
 
 / covariance/correlation calculate upper triangle only
 cvm:{(x+flip(not n=\:n)*x:(n#'0.0),'(x$/:'(n:til count x)_\:x)%count first x)-a*\:a:avg each x:"f"$x}

@@ -8,6 +8,16 @@
 /force python to refrain from producing version warnings.
 .p.import[`warnings][`:filterwarnings]["ignore"];
 
+median:{med x}
+variance:{var x}
+mean:{avg x}
+stdev:{dev x}
+
+npreal:.p.import[`numpy]`:real
+npangle:.p.import[`numpy]`:angle
+npimag:.p.import[`numpy]`:imag
+npabs:.p.import[`numpy]`:abs
+
 \d .fresh
 
 / features from raw data, single outputs
@@ -16,11 +26,10 @@ feat.abssumchange:{sum abs 1_deltas x}                                          
 feat.autocorr:{(avg(x-m)*xprev[y;x]-m:avg x)%var x}                                 / x values, y lag 
 feat.binnedentropy:{neg sum p*log p:hist["f"$x;y][0]%count x}                       / measure of 'chunked' system entropy 
 feat.c3:{0^avg (-2*y) _x*prd xprev\:[-1 -2*y;x]}                                    / measure of t-series non-linearity Schreiber, T. and Schmitz, A. (1997). PHYSICAL REVIEW E, VOLUME 55, NUMBER 5
-feat.changequant:{[x;ql;qh;isabs]                                             / mean of changes of series inside corridor
+feat.changequant:{[x;ql;qh;isabs;aggfn]                                             / mean of changes of series inside corridor
  diff:$[isabs;abs;]1_deltas x;
  incor:min (>[x];<[x])@'feat.quantile[x]each ql,qh;
- k:diff where 1_&':[incor];
- `max`min`avg`var`dev!(max k;min k;avg k;var k;dev k)}
+ aggfn diff where 1_&':[incor]}
 feat.cidce:{sqrt k$k:"f"$1_deltas$[not y;x;0=s:dev x;:0.;(x-avg x)%s]}              / measure of time series complexity ref- http://www.cs.ucr.edu/~eamonn/Complexity-Invariant%20Distance%20Measure.pdf
 feat.count:{count x}
 feat.countabovemean:{sum x>avg x}						      
@@ -69,13 +78,7 @@ feat.vargtstddev:{1<var x}
 
 
 / multi-outputs
-/aggregated linear trend outputs
-feat.agglintrend:{lintrend aggonchunk[x;y]}
-/aggregated autocorrelation
-feat.aggautocorr:{n:count x;
- $[((abs var x) < 10 xexp -10) or n=1;a:0;a:1 _acf[x;`unbiased pykw 1b;`fft pykw n>1250]`];
- `avg`med`var`dev!(avg a;med a;var a;dev a)}
-/linear trend parameters
+feat.agglintrend:{lintrend aggonchunk[x;y;z]}
 feat.lintrend:{
  k:1+til count x;df:(n:count k)-2; 
  rnum:cov[k;x];rden:sqrt cov[k;k]*cov[x;x];rval:$[rden=0;0f;rnum%rden];
@@ -84,6 +87,15 @@ feat.lintrend:{
   [t:rval*sqrt df%(1f-rval+tiny)*1f+rval+tiny:1e-20;stderr:sqrt(1-rval*rval)*cov[x;x]%cov[k;k]*df;p:2*tdistrib[abs t;df]`;]];
  `slope`intercept`rval`p`stderr!slope,intercept,rval,p,stderr
  }
+/ outputs from fft
+fftaggreg:{[x] getmoment:{[y;moment](("f"$y)$("f"$arange[0;count y;1])xexp moment)%(sum y)};
+ l:absolute[rfft[x]`]`;
+ centroid:getmoment[l;1];m2:getmoment[l;2];m3:getmoment[l;3];m4:getmoment[l;4];
+ getvariance:{x-(y xexp 2)};variance:getvariance[m2;centroid];
+ getskew:{[l;y;z;k]$[z<0.5;0n;((k-3*y*z)-(y xexp 3))%(z xexp 1.5)]};skew:getskew[l;centroid;variance;m3];
+ getkurtosis:{[l;y;z;m2;m3;m4]$[z<0.5;0n;((m4-4*y*m3-3*y)+(6*m2*y*y))%(z xexp 2)]};kurtosis:getkurtosis[l;centroid;variance;m2;m3;m4];
+ `centroid`variance`skew`kurtosis!centroid,variance,skew,kurtosis}
+
 
 partautocorrelation:{[x;lag]
  maxreqlag:max lag;
@@ -106,23 +118,19 @@ spktwelch:{[x;coeff]
 
 fftcoeff:{[x;y;z]
  fftx:rfft[x];
- $[z<(count npangle[fftx]`);
-  $[y = `real;(npreal[fftx]`)z;y = `abs;(npabs[fftx]`)z;y = `imag;(npimag[fftx]`)z;y=`angle;(npangle[fftx;`deg pykw 1b]`)z;0n]
-  ;0n]}
+ $[z<(count `npangle[fftx]`);$[y in `real`imag`abs;[[`$"np",string y][fftx]`][z];y=`angle;[`npangle[fftx;`deg pykw 1b]`][z];0n];0n]}
 
-/ The following 2 functions can be implemented now but are time consuming calculations
+/ This function currently needs median,variance,mean and standard deviation to be defined separate to the initial q implementation.
+aggautocorr:{[x;funcs]
+ n:count x;
+ $[((abs var x) < 10 xexp -10) or n=1;a:0;a:1 _acf[x;`unbiased pykw 1b;`fft pykw n>1250]`];
+ funcs!{value(x;y)}[;a]each 'funcs}
+
+/ This can be implemented now but is a time consuming calculation (4th behind sample entropy, approx entropy and numcwtpeaks)
 augfuller:{[x]
  k:{adfuller[x]`};
  res:@[k;x;3#0n];
  r:`teststat`pvalue`usedlag!(res[0];res[1];res[2])}
-
-fftaggreg:{[x] getmoment:{[y;moment](("f"$y)$("f"$arange[0;count y;1])xexp moment)%(sum y)};
- l:absolute[rfft[x]`]`;
- centroid:getmoment[l;1];m2:getmoment[l;2];m3:getmoment[l;3];m4:getmoment[l;4];
- getvariance:{x-(y xexp 2)};variance:getvariance[m2;centroid];
- getskew:{[l;y;z;k]$[z<0.5;0n;((k-3*y*z)-(y xexp 3))%(z xexp 1.5)]};skew:getskew[l;centroid;variance;m3];
- getkurtosis:{[l;y;z;m2;m3;m4]$[z<0.5;0n;((m4-4*y*m3-3*y)+(6*m2*y*y))%(z xexp 2)]};kurtosis:getkurtosis[l;centroid;variance;m2;m3;m4];
- `centroid`variance`skew`kurtosis!centroid,variance,skew,kurtosis}
 
 
 / utils for the above
@@ -134,15 +142,9 @@ pacf:.p.import[`statsmodels.tsa.stattools]`:pacf
 adfuller:.p.import[`statsmodels.tsa.stattools]`:adfuller
 acf:.p.import[`statsmodels.tsa.stattools]`:acf
 welch:.p.import[`scipy.signal]`:welch
-npreal:.p.import[`numpy]`:real
-npangle:.p.import[`numpy]`:angle
-npimag:.p.import[`numpy]`:imag
-npabs:.p.import[`numpy]`:abs
 
-/x:data;y:chunk length
-aggonchunk:{
- n:y cut x;
- `max`min`avg`var`dev!(max each n;min each n;avg each n;var each n;dev each n)}
+
+aggonchunk:{y each z cut x} /x:data;y:agg function;z:chunk length 
 getlenseqwhere:{(1_deltas i,count x)where x i:where differ x}
 arange:{x+z*til ceiling(y-x)%z}                                                              / x until y
 hist:{(count each value(asc key g)#g:group(-1_a) bin x;a:min[x]+til[1+y]*(max[x]-min x)%y)} /x=data;y=#bins

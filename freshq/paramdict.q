@@ -21,6 +21,7 @@ paramdict:
 		changequant:(select ql:(0 0.2 0.4 0.6 0.8),
 				    qh:(0.2 0.4 0.6 0.80 1),
 				    isabs:01b,
+				    aggfn:`mean`variance`median`stdev
 			     from (0#`)!()),
 		fftcoeff:(select attrib:(`real`imag`abs`angle),
 				 coeff:(til 100)
