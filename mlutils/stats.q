@@ -19,7 +19,7 @@ confdict:{`tp`fn`fp`tn!raze value confmat[x;y;z]} / number of TP,FN,FP,TN.
 crossentropy:{avg neg eye[count y 0][x]*log y|EPS}
 
 / descriptive statistics of the table columns
-describe:{`count`mean`std`min`q1`q2`q3`max!flip(count;avg;dev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/:flip(exec c from meta[x]where t in"hijefpmdznuvt")#x}
+describe:{`count`mean`std`min`q1`q2`q3`max!flip(count;avg;sdev;min;percentile[;.25];percentile[;.5];percentile[;.75];max)@\:/:flip(exec c from meta[x]where t in"hijefpmdznuvt")#x}
 
 /x is the actual class should be 0 or 1; y should be the probability of belonging to class 0 or 1 for each instance
 logloss:{avg neg u+x*log[y[;1]]-u:log(y:EPS|y)[;0]}

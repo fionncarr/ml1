@@ -12,7 +12,7 @@ onehot:{eye[count d](d:asc distinct x)?x}                               / encode
 / scale data between 0 and 1
 minmaxscaler:{{(z-x)%y}[mnx;max[x]-mnx:min x]each x}
 / remove mean and standardize by standard deviation.
-stdscaler:{(x-avg x)%dev x}
+stdscaler:{flip {(x-avg x)%dev x}each flip x}
 
 / replace +/- float infinities with max/min values in the column
 infreplace:{[tab]

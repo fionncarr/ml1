@@ -41,7 +41,7 @@ onehotx:`a`p`l`h`j
 (value .ml.corrmat[plaintab]) ~ "f"$([]1 1 -1 1;1 1 -1 1;-1 -1 1 -1;1 1 -1 1)
 (value .ml.confmat[xb;yb]) ~ (8 12;1 3)
 
-1 = count distinct min each (value .ml.describe[tabtest]) = value .ml.df2tab .p.import[`pandas][`:DataFrame.describe][.ml.tab2df[tabtest]]
+1 = count distinct min each (value .ml.describe[plaintab]) = value .ml.df2tab .p.import[`pandas][`:DataFrame.describe][.ml.tab2df[plaintab]]
 
 .ml.tscoreeq[x;y]~abs first stats[`:ttest_ind][x;y]`
 
