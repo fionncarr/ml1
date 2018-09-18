@@ -26,6 +26,7 @@ Included in the library in addition to the extraction and significance procedure
 - scikit-learn
 - scipy = 1.0.0
 - statsmodels
+- matplotlib
 
 The python dependencies can be installed via:
 
