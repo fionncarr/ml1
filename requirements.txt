@@ -2,3 +2,5 @@ numpy
 scipy==1.0.0
 scikit-learn
 statsmodels
+pandas 
+matplotlib
