@@ -30,6 +30,7 @@ install:
       pip install -r requirements.txt;
     fi
 script:
+- which python
 - echo "Preparing version $TRAVIS_BRANCH-$TRAVIS_COMMIT"
 - tar czf ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz *.q requirements.txt  LICENSE README.md
 - echo "Packaged as ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip"
