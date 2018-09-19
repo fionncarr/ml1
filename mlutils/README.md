@@ -1,16 +1,9 @@
-# Mlutils
+# MLToolkit
 ## Introduction
-The functions contained in this folder constitute a set of functions which are used extensively in machine learning applications. These range from functions for the linear interpolation of data to allow for equi-spaced time to be enforced on the data to statistical functions such as calculations of sensitivity or specificity.
-## Functionality
-Within the folder mlutils are 3 scripts which deal with different aspects of machine learning and the functions that have been produced to aid the kdb+/q user in applying machine learning procedures to their datasets
+This repository contains two distinct sections. First is an implementation of the FRESH (FeatuRe Extraction and Scalable Hypothesis testing) algorithm called fresh.q for use in the extraction of features from time series data and the reduction in the number of features through statistical testing. The second section is a number of scipts containing functions which are relevant for use in a variety of machine learning applications.
 
-1. Statistical functions for testing the accuracy of machine learning procedures including but not limited to, confusion matrices, t-score, logloss, specificity and accuracy
+The contents of both sections are explained in greater depth within their individual folders and at [INSERT code.kx.com links.]
 
-2. Preprocessing functions for the manipulation of data prior to the application of machine learning algotithms. These include, tailored filling of data (linear/mean/median/zero and forward filling), interpolation (fill type or linear), one hot encoding, removal of zero variance features from data, creation of polynomial features and the production of rolled forecasting frame tables.
-
-3. Finally within mlutils, funcs.q contains functions found to be commonly used in ML applications, conversion of time data value to longs such that they can be used as features, enumeration of symbols, converstion of q tables to pandas dataframes (and vice-versa), train-test split functions (seeded/unseeded), functions for checking datatypes, producing arrays and checking matrices properties
-  
-The functions which are currently contained in these scripts are by no means exhaustive and will be added to on an ongoing basis.
 ## Requirements
 
 - kdb+ ≥ 3.5 64-bit
@@ -19,9 +12,13 @@ The functions which are currently contained in these scripts are by no means exh
 
 #### Dependencies
 - numpy
+- scikit-learn
+- scipy = 1.0.0
+- statsmodels
+- matplotlib
 - pandas
 
-Numpy and pandas can be installed via:
+Numpy and scipy can be installed via:
 
 pip:
 ```bash
@@ -32,20 +29,22 @@ or via conda:
 ```bash
 conda install --file requirements.txt
 ```
+
 ## Installation
 
-Place the library file in `$QHOME` and load into a q instance using `ml/mlutils/init.q`
+Place the library file in `$QHOME` and load into a q instance using `ml/init.q`
+
+This will load all the functions contained within the `.fresh` and `.ml` namespaces 
 ```q
-\l ml/mlutils/init.q
+\l ml/init.q
 ```
 
+Loading of the individual libraries can be completed via `ml/mlutils/init.q` or `ml/freshq/init.q` depending on if the preprocessing/statistical functions are needed or the FreshQ alone is required
 ## Documentation
 
-Documentation is available on the [mlutils](https://code.kx.com/q/ml/mlutils/) homepage.
+Documentation is available on the [FreshQ](https://code.kx.com/q/ml/freshq/) and [mlutils](https://code.kx.com/q/ml/mlutils) homepage.
 
 ## Status
-  
-The machine learning utilities library is still in development and is available here as a beta release, further functionality and improvements will be made to the library in the coming months.
 
-If you have any issues, questions or suggestions, please write to ai@kx.com.
+The FreshQ library is still in development and is available here as a beta release, further functionality and improvements will be made to the library in the coming months.
 
