@@ -11,6 +11,8 @@ linspace:{x+til[z]*(y-x)%z-1}
 range:{max[x]-min x}
 / shape of a list
 shape:{-1_count each first scan x}
+/Convert an unkeyed table to matrix
+mattab:{flip value flip x}
 
 /split data into train and test datasets where sz is the % of data in test
 traintestsplit:{[x;y;sz]`xtrain`ytrain`xtest`ytest!raze(x;y)@\:/:(0,floor n*1-sz)_neg[n]?n:count x}

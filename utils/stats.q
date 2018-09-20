@@ -13,7 +13,7 @@ corrmat:{$[t;{x!x!/:y}cols x;]crm$[t:98=type x;value flip@;]x}
 / confusion matrix, x predicted class, y actual class
 confmat:{cs:asc distinct y;exec 0^(count each group pred)cs by label from([]pred:x;label:y)}
 / dictionary of tp/tn/fp/fn from confusion matrix
-confdict:{`tp`fn`fp`tn!raze value confmat[x;y;z]} / number of TP,FN,FP,TN.
+confdict:{`tp`fn`fp`tn!raze value confmat[x;y]} / number of TP,FN,FP,TN.
 
 / x is alist of unique class labels (0 = class 1, 1 = class 2 ... ); y is the probability of belonging to a class
 crossentropy:{avg neg eye[count y 0][x]*log y|EPS}

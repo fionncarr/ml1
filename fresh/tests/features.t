@@ -4,8 +4,8 @@ that are present in the tsfresh documentation. It should be noted that for large
 \
 
 \l p.q
-\l fresh.q
-\l tests/test.p
+\l ml/fresh/fresh.q
+\l ml/fresh/tests/test.p
 
 xint:10000?10000 ;xfloat:10000?50000f;
 yint:42;ynull:0n;

@@ -1,6 +1,6 @@
 # MLToolkit
 ## Introduction
-This repository contains two distinct sections. First is an implementation of the FRESH (FeatuRe Extraction and Scalable Hypothesis testing) algorithm called FreshQ for use in feature extraction from time series data and the reduction in the number of features through statistical testing. The second section is a number of scipts containing functions which are relevant for use in a variety of machine learning applications.
+This repository contains two distinct sections. First is an implementation of the FRESH (FeatuRe Extraction and Scalable Hypothesis testing) algorithm called fresh.q for use in the extraction of features from time series data and the reduction in the number of features through statistical testing. The second section is a number of scipts containing functions which are relevant for use in a variety of machine learning applications.
 
 The contents of both sections are explained in greater depth within their individual folders and at [INSERT code.kx.com links.]
 
@@ -15,6 +15,8 @@ The contents of both sections are explained in greater depth within their indivi
 - scikit-learn
 - scipy = 1.0.0
 - statsmodels
+- matplotlib
+- pandas
 
 Numpy and scipy can be installed via:
 

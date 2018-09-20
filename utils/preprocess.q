@@ -25,7 +25,7 @@ infreplace:{[tab]
 tablerolldrop:{[table;id;n]{(sum 1+til y-1) _(neg y) _x}[rollingtable[table;id;n];n]}
 
 / default dictionary which can be modified to change the filling/interpolation behaviour
-dict:``zero`median`mean`fill`linear!(::;0n;0n;0n;0n;0n)
+preprocdict:``zero`median`mean`fill`linear!(::;0n;0n;0n;0n;0n)
 
 fillfn:{[tab;tcol;dict]
  n0:$[k0:11h=abs type i0:dict`zero;tcol,i0;0b];

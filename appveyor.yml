@@ -11,3 +11,4 @@ build_script:
 
     build\buildscript.bat
 
+    build\test.bat
