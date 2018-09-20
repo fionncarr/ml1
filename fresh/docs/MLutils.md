@@ -10,13 +10,13 @@ date: October 2018
 keywords: machine learning, ml, utilities, interpolation, filling, statistics
 
 ---
-# ML utils 
+# Utils 
 
 ## Overview
 
 Within machine learning applications a number of procedures and analyses are ubiquitous, for example the production of confusion matrices in classification problems, creation of ROC curves, the need to fill null data in a tunable manner and the use of interpolation to fix an equal spacing between data points.
 
-The utility functions presently contained in the ML toolkit contains 3 main sub-sections.
+The utility functions presently contained in the ML-Toolkit contains 3 main sub-sections.
 
 1. funcs.q: this contains functions that are used commonly in ML applications (train test split, array production etc.)
 2. stats.q: statistical functions for measuring the success of a machine learning model (correlation matrices, mean square error, roc curves etc.)
@@ -42,8 +42,8 @@ Within `stats.q` are a variety of functions used for analysing the results garne
 |corrmat(tab)               | Create a table like correlation matrix for a input unkeyed table.|
 |confmat(x;y)               | Produce a confusion matrix given x a vector of the predicted labels and y the true labels in a classification problem.|
 |confdict(x;y)              | Given x the predicted label and y the true labels, produce a dictionary of true/false positives and true/false negative.|
-|crossentropy(x;y)          | Calculates the categorical cross entropy between a set of unique class labels x and the probability of belonging to a class y.|
 |describe(tab)              | For an input table this produces descriptive information about the table including the mean, quartiles, and deviation.|
+|crossentropy(x;y)          | Calculates the categorical cross entropy between a set of unique class labels x and the probability of belonging to a class y.|
 |logloss(x;y)               | This calculates the log loss given actual classes x (0/1) and the probability of belonging to the assigned class.|
 |precision(x;y;z)           | Calculate the precision of a binary classifier where x is prediction, y are real labels and z is the positive labels value.|
 |sensitivity(x;y;z)         | Calculate the sensitivity of a binary classifier where x is prediction, y are real labels and z is the positive labels value.|
@@ -212,6 +212,39 @@ q3   | 7453.287 750.25   749.25   74.98685
 max  | 9994.308 1000     999      99.98165 
 ```
 
+### .ml.crossentropy
+
+Syntax: `.ml.crossentropy[x;y]`
+
+Returns the categorical cross entropy where `x` is a set of unique class labels `y` is the probability of belonging to one specific class 
+
+
+```q
+q)x:1000?10
+q)y:1000?1f
+q).ml.crossentropy[x;y]
+1.000794
+```
+
+### .ml.logloss
+
+Syntax: `.ml.logloss[x;y]`
+
+Returns the logarithmic-loss for a binary classifier
+
+Where
+* `x` is a set of the classes 0/1
+* `y` is a matrix with the first row giving the probability that each class element x belongs to class 0 and the second row is the probability if belongs to class 1
+
+```q
+q)x:rand each 1000#0b
+q)k:1000?1f
+q)y:flip (k;1-k)
+q).ml.logloss[x;y]
+1.024205
+```
+
+
 ### .ml.precision
 
 Syntax: `.ml.precision[x;y;z]`
@@ -321,13 +354,14 @@ q).ml.tscore[x;y]
 
 Syntax: `.ml.tscoreeq[x;y]`
 
-Returns a 
-
-Where
-*
+Returns the t-test score of 2 independent sample distributions `x` and `y` with non equal variance
 
 ```q
-
+q)n:1000
+q)x:{x,(sum 20?1f) - 10}/[{not n~count x};()]  /Gaussian distribution
+q)y:{x,(sum 20?1f) - 10}/[{not n~count x};()]
+q).ml.tscore[x;y]
+1.106935
 ```
 
 
@@ -338,7 +372,6 @@ The functions contained in the script preprocess.q are related to the preprocess
 
 |Function                   | Description |
 |---------------------------| ---------------------------------|
-|binarizer(tab;tval)        | Binarize a table based on a threshold value tval.|
 |onehot(x)                  | Encode a list of symbols via one hot encoding.|
 |checknulls(tab)            | Find columns within a table that contain any null values.|
 |dropconstant(tab)          | Remove columns from a table which have zero variance.|
@@ -351,25 +384,334 @@ The functions contained in the script preprocess.q are related to the preprocess
 |tabfnbin(tab;tcol;dif;dict)| Default behaviour is to fill type interpolate data based on defined time difference, linear interpolation can be enforced through modification of dict.|
 |fillfn(tab;tcol;dict)      | Used in the  tailored filling of null values within the an unkeyed table, this defaults to forward fill all data unless specified in dict.|
 
+The following are examples of the operation of each of the functions contained in the preprocessing section of the machine learning utilities.
+
+### .ml.onehot
+
+Syntax: `.ml.onehot[x]`
+
+Returns a one hot encoded representation of an input list of symbols `x`.
+
+```q
+q)x:`a`a`b`b`c`a
+q).ml.onehot[x]
+1 0 0
+1 0 0
+0 1 0
+0 1 0
+0 0 1
+1 0 0
+```
+
+### .ml.checknulls
+
+Syntax: `.ml.checknulls[x]`
+
+Returns a list of the columns within a table of numerical values `x` that contain null values.
+
+```q
+q)tab:([]1 2 3 4 0N 6;6?10f;1.2 2.4 3.6 4.8 0n 7.2)
+q).ml.checknulls[tab]
+`x`x2
+```
+
+### .ml.dropconstant
+
+Syntax: `.ml.dropconstant[x]`
+
+Returns given an input numerical table `x` a table where all columns that contain zero variance have been removed
+
+```q
+q)n:1000
+q)3#tab:([]n?100f;n#0n;n?1000;n#10;n#0N)
+x        x1 x2  x3 x4
+---------------------
+27.05226    482 10   
+90.72252    845 10   
+84.72851    971 10   
+
+q)3#.ml.dropconstant[tab]
+x        x2 
+------------
+27.05226 482
+90.72252 845
+84.72851 971
+```
+
+### .ml.minmaxscaler
+
+Syntax: `.ml.minmaxscaler[x]`
+
+Returns for an input numerical table `x` a min-max scaled representation of the table with values in the table scaled between 0 and 1
+
+```q
+q)n:5
+q)tab:([]n?100f;n?1000;n?100f;n?50f)
+x        x1  x2       x3       
+------------------------------
+5.131717 681 43.96318 23.40407
+50.60375 752 71.45967 40.97883
+34.9319  312 71.68448 37.79269
+71.23945 858 35.90727 13.17263
+43.51838 399 85.67067 32.51957
+
+q).ml.minmaxscaler[tab]
+x         x1        x2        x3       
+---------------------------------------
+0         0.6758242 0.1618843 0.3679552
+0.6878474 0.8058608 0.7144287 1        
+0.450782  0         0.7189462 0.885416 
+1         1         0         0        
+0.5806683 0.1593407 1         0.6957777
+```
+
+### .ml.stdscaler
+
+Syntax: `.ml.stdscaler[x]`
+
+Returns for an input numerical table `x` a representation of the table where each column has undergone a standard scaling given as `[x-avg x]%dev x`
+
+```q
+q)n:5
+q)tab:([]n?100f;n?1000;n?100f;n?50f)
+x        x1  x2       x3       
+------------------------------
+5.131717 681 43.96318 23.40407
+50.60375 752 71.45967 40.97883
+34.9319  312 71.68448 37.79269
+71.23945 858 35.90727 13.17263
+43.51838 399 85.67067 32.51957
+
+q).ml.stdscaler[tab]
+x          x1         x2         x3       
+---------------------------------------
+-1.663252  0.3846187  -0.9502199 -0.6088642
+0.4403491  0.7234267  0.5197869  1.125582  
+-0.2846532 -1.376229  0.5318052  0.8111424 
+1.394986   1.229253   -1.380902  -1.618601 
+0.11257    -0.9610695 1.27953    0.2907405 
+
+```
+
 ## General functions
 The functions contained within the script funcs.q are general use functions which are commonly used in machine learning applications, these range from splitting data into train/test sets to the conversion of tabular data to a matrix. The following table gives an outline of the currently implemented functions contained within this script
 
 |Function                        | Description |
 |--------------------------------| ---------------------------------|
 | arange(x;y;z)                  | Produces evenly spaced values between x and y in steps of length z.|
-| dtypes(tab)                    | Display the type of each of the columns in a table.|
 | linspace(x;y;z)                | Creates an array of z evenly spaced values between x and y.|
 | range(x)                       | Calculate the range of values in an 1D array x.|
 | shape(x)                       | Outputs the shape of an array x.|
-| mattab(tab)                    | Produces a matrix representation of an unkeyed table for passing to a machine learning algorithm.|
 | traintestsplit(x;y;sz)         | Splits data x and target y into training and test sets where sz is the % of data in test.|
 | traintestsplitseed(x;y;sz;seed)| Split data and target into train and test sets as previously but with a seed set by user.|
 | times2long(tab)                | Covert times in a table to longs.|
 | enum(tab)                      | Enumerate any sym files in the table.|
 | tab2df(tab)                    | Convert a q table to a pandas dataframe.|
 | df2tab(pdtab)                  | Convert a pandas dataframe to a q table.|
+| mattab(tab)                    | Produces a matrix representation of an unkeyed table for passing to a machine learning algorithm.|
 
----
+The following is an example of the operation of each of the functions contained in the general functions (funcs.q) script each function contained in the .ml namespace.
+
+### .ml.arange
+
+Syntax: `.ml.arange[x;y;z]`
+
+Returns an evenly spaced array of values between `x` and `y` in steps of length `z`.
+```q
+q).ml.arange[1;10;1]
+1 2 3 4 5 6 7 8 9
+q).ml.arange[6.25;10.5;0.05]
+6.25 6.3 6.35 6.4 6.45 6.5 6.55 6.6 6.65 6.7 6.75 6.8 6.85 6.9 6.95 7 7.05 7...
+```
+
+### .ml.linspace
+
+Syntax: `.ml.linspace[x;y;z]`
+
+Returns an array of `z` evenly spaced values between `x` and `y`.
+
+```q
+q).ml.linspace[10;20;9]
+10 11.25 12.5 13.75 15 16.25 17.5 18.75 20
+q).ml.linspace[0.5;15.25;12]
+0.5 1.840909 3.181818 4.522727 5.863636 7.204545 8.545455 9.886364 11.22727 1..
+```
+
+### .ml.range
+
+Syntax: `.ml.range[x]`
+
+Returns the range of the values contained in a 1D array `x`
+
+```q
+q)x:1000?100000f
+q).ml.range[x]
+99742.37
+```
+
+### .ml.shape
+
+Syntax: `.ml.shape[x]`
+
+Returns the shape of a matrix `x` in the format (#rows,#columns)
+
+```q
+q)x:(30 20)#1000?10f
+q).ml.shape[x]
+30 20
+```
+
+### .ml.traintestsplit
+
+Syntax: `.ml.traintestsplit[x;y;sz]`
+
+Returns a dictionary containing the data matrix `x` and target `y` split into a training and testing set based on the percentage `sz` of the data to be contained in the test set.  
+
+```q
+q)x:(30 20)#1000?10f
+q)y:rand each 30#0b
+q).ml.traintestsplit[x;y;0.2] / split the data such that 20% is contained in the test set
+xtrain| (2.02852 2.374546 1.083376 2.59378 6.698505 6.675959 4.120228 2.63468..
+ytrain| 110010100101111001110000b
+xtest | (8.379916 8.986609 7.06074 2.067817 5.468488 4.103195 0.1590803 0.259..
+ytest | 000001b
+```
+
+### .ml.traintestsplitseed
+
+Syntax: `.ml.traintestsplitseed[x;y;sz;seed]`
+
+As with .ml.traintestsplit this returns a dictionary containing the data matrix `x` and target `y` split into a training and testing set based on the percentage `sz` of the data to be contained in the test set. This version can be given a random seed (`seed`), thus alllowing for the same splitting of the data to be repeatedly achieved
+
+```q
+q)x:(30 20)#1000?10f
+q)y:rand each 30#0b
+q).ml.traintestsplitseed[x;y;0.2;42]
+xtrain| (8.752061 6.82448 3.992896 2.465234 8.599461 2.452222 6.070236 6.8686..
+ytrain| 000011101000001110111101b
+xtest | (4.204472 7.137387 1.163132 9.893949 4.504886 5.465625 8.298632 0.049..
+ytest | 000001b
+```
+
+
+### .ml.times2long
+
+Syntax: `.ml.times2long[x]`
+
+Returns for an input table `x`, a table where all time columns have been converted to a long representation
+
+```q
+q)n:1000
+q)3#tab:([]sym:n?`1;time:asc n?00:00:05.000;n?1000f;n?100)
+sym time         x        x1
+----------------------------
+p   00:00:00.002 37.74609 92
+a   00:00:00.007 135.1677 73
+b   00:00:00.015 838.3428 96
+
+
+q)3#.ml.times2long[tab]
+sym time x        x1
+----------------
+p   2    37.74609 92
+a   7    135.1677 73
+b   15   838.3428 96
+```
+
+### .ml.enum
+
+Syntax: `.ml.enum[x]`
+
+Returns for an input table `x` and table where columns containing symbols have been enumerated 
+
+```q
+q)n:1000
+q)5#tab:([]sym:n?`a`b;time:asc n?00:00:05.000;n?1000f;n?100)
+sym time         x        x1
+----------------------------
+b   00:00:00.006 698.6595 12
+a   00:00:00.013 671.1112 10
+b   00:00:00.013 171.778  1 
+b   00:00:00.018 476.7409 90
+a   00:00:00.023 341.0811 73
+
+q)5#.ml.enum[tab]
+sym time         x        x1
+----------------------------
+0   00:00:00.006 698.6595 12
+1   00:00:00.013 671.1112 10
+0   00:00:00.013 171.778  1 
+0   00:00:00.018 476.7409 90
+1   00:00:00.023 341.0811 73
+```
+
+### .ml.tab2df
+
+Syntax: `.ml.tab2df[x]`
+
+Returns a pandas dataframe for a q table input `x`
+
+```q
+q)n:5
+q)table:([]x:n?10000f;x1:1+til n;x2:reverse til n;x3:n?100f) / q table for input
+x        x1 x2 x3      
+-----------------------
+2631.44  1  4  78.71917
+1118.109 2  3  80.09356
+3250.627 3  2  16.71013
+q)show pdf:.ml.tab2df[table] / convert to pandas dataframe and show it is an embedPy object
+{[f;x]embedPy[f;x]}[foreign]enlist 
+q)print pdf / display the python form of the dataframe
+             x  x1  x2         x3
+0  2631.439704   1   4  78.719172
+1  1118.109056   2   3  80.093563
+2  3250.627243   3   2  16.710134
+```
+
+### .ml.df2tab
+
+Syntax: `.ml.df2tab[x]`
+
+Returns a q table for an pandas table input `x`
+
+```q
+q)n:3
+q)table:([]x:n?10000f;x1:1+til n;x2:reverse til n;x3:n?100f) / q table for input
+q)print pdf:.ml.tab2df[table] / convert to pandas dataframe
+             x  x1  x2         x3
+0  2631.439704   1   4  78.719172
+1  1118.109056   2   3  80.093563
+2  3250.627243   3   2  16.710134
+
+q).ml.df2tab[pdf] /convert dataframe back to q table
+x        x1 x2 x3      
+-----------------------
+2631.44  1  4  78.71917
+1118.109 2  3  80.09356
+3250.627 3  2  16.71013
+```
+
+### .ml.mattab
+
+Syntax: `.ml.mattab[x]`
+
+Returns a matrix representation of a table `x`, this is often used prior to the injection of data into a machine learning algorithm
+
+```q
+q)n:1000
+
+q)5#tab:([]sym:n?`a`b;time:asc n?00:00:05.000;n?1000f;n?100)
+sym time         x        x1
+----------------------------
+b   00:00:00.006 698.6595 12
+a   00:00:00.013 671.1112 10
+b   00:00:00.013 171.778  1 
+
+q)3#.ml.mattab[tab]
+`b 00:00:00.006 698.6595 12
+`a 00:00:00.013 671.1112 10
+`b 00:00:00.013 171.778  1 
+```
 
 (The location of this and it's general presence in the documentation needs to be checked)
 

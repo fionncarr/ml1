@@ -15,7 +15,7 @@ keywords: machine learning, ml, feature extraction, feature selection, time seri
 
 ## Overview
 
-The machine learning toolkit herein referred to as the ML toolkit contains a number of libraries and scripts. These have been produced with the aim of providing q/kdb+ users with general use functions and procedures to allow them to perform machine learning tasks on a wide variety of datasets.
+The machine learning toolkit herein referred to as the ML-Toolkit contains a number of libraries and scripts. These have been produced with the aim of providing q/kdb+ users with general use functions and procedures to allow them to perform machine learning tasks on a wide variety of datasets.
 
 This toolkit contains at present 2 main sections. 
 
