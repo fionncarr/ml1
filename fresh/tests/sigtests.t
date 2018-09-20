@@ -14,9 +14,9 @@ equivalent significance tests implemented previously in python.
 \
 
 \l p.q
-\l ml/fresh/fresh.q
-\l ml/fresh/ts_feature_significance.q
-\l ml/fresh/tests/significancetests.p
+\l fresh/fresh.q
+\l fresh/ts_feature_significance.q
+\l fresh/tests/significancetests.p
 
 xreal:5000?1000f
 xbin:rand each 5000#0b
