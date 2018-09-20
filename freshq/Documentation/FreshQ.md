@@ -15,12 +15,11 @@ keywords: machine learning, ml, feature extraction, feature selection, time seri
 
 ## Overview
 
-Feature extraction and selection are vital components of the machine learning pipeline. Here we outline an implementation of the FRESH (FeatuRe Extraction and Scalable Hypothesis testing) algorithm[1]. This provides the opportunity to explore structured datasets in depth and to extract the most relevant features for predicting a target vector. 
+Feature extraction and selection are vital components of many machine learning pipelines. Here we outline an implementation of the FRESH (FeatuRe Extraction and Scalable Hypothesis testing) algorithm[1]. This provides the opportunity to explore structured datasets in depth and to extract the most relevant features for predicting a target vector. 
 
-Feature extraction at a basic level is the process by which from an initial dataset we build derived values/features which may be informative when passed to a machine learning algorithm. It allows for information which may be pertinent to the prediction of an attribute of the system under investigation to be extracted. This information is often easier to interpret than the time series in its raw form. It also offers the chance to apply less complex machine learning models to our data as the important trends in the data do not have to be extracted from the data via more complex methods.
+Feature extraction at a basic level is the process by which from an initial dataset we build derived values/features which may be informative when passed to a machine learning algorithm. It allows for information which may be pertinent to the prediction of an attribute of the system under investigation to be extracted. This information is often easier to interpret than the time series in its raw form. It also offers the chance to apply less complex machine learning models to our data as the important trends in the data do not have to be extracted from the data within more complex models.
 
-Following feature extraction statistical significance tests between the feature and target vectors. This is required as within the features extracted from the initial data there may only be a small subsection of features of importance. Once statistical tests have been completed to find the relevance of features
-the Benjamini-Hochberg-Yekutieli procedure is applied to set a threshold for the features which are deemed to be important. 
+Following feature extraction, statistical significance tests between the feature and target vectors can be applied. This is required as within the features extracted from the initial data there may only be a small subsection of features of importance. Once statistical tests have been completed to find the relevance of the features as a p-value the Benjamini-Hochberg-Yekutieli procedure is applied to set a threshold for the features which are deemed to be important. 
 
 The purpose of feature selection from the standpoint of improving the accuracy of a machine learning algorithm are as follows
 
@@ -39,16 +38,16 @@ One of the key requirements of this library is that the data being passed to the
 
 The data should also not contain text in the form of strings or symbols (other than in the id column) as these cannot be passed to the feature calculation functions. If a text based feature is thought to be important however, one hot encoding can be completed to convert the text to numerical values if deemed particularly relevant.
 
-Data-types which are supported by the feature extraction procedure are boolean, int, real, long, short and float. Other datatypes should not passed to the extraction procedure as features creation will not be supported under such conditions.
+Data-types which are supported by the feature extraction procedure are boolean, int, real, long, short and float. Other datatypes should not passed to the extraction procedure as feature creation will not be supported under such conditions.
 
-Functions to complete the formatting above including the tailored filling of nulls, application of a 'rolling window' and the interpolation of data are supplied within the ML toolkit and documented at (...Insert link to non fresh documentation...)
+Functions to complete the formatting above including the tailored filling of nulls, application of a 'rolling window' and the interpolation of data are supplied within the Utils section of the ML-Toolkit and documented [here](...Insert link to non fresh documentation...)
 ## Calculated Features
 
 The features extracted from the data are contained in the script fresh.q within the .fresh namespace and can be displayed via the syntax:
 
 `.fresh.feat`
 
-The following is a table of a subset of the calculated features and a short description this subset.
+The following is a table of a subset of the calculated features and a short description of each.
 
 |Function                         | Description |
 |:--------------------------------|:-------------------------------------------------|
@@ -84,36 +83,30 @@ The following is a table of a subset of the calculated features and a short desc
 |treverseasymstat(x,lag)          | Measure of the asymmetry of the time series based on lags applied to the data. |
 |vargtstdev(x)                    | Boolean defining if the variance of the dataset is larger than the standard deviation. |
 
-A more detailed explanation of individual functions is available on request, as is information on the remaining functions which includes but are not limited the the following max, min, variance ,mean, count, sum of all values, skewness, first/last locations of max/min etc.
-
+Given that the functions contained within in this namespace are not called individually but from the extraction procedure itself a detailed explanation of their individual operation is not provided here. Further information is available on request if required.
 
 ## Feature Extraction
-#### `.fresh.createfeatures`
-
 Feature extraction is the application of functions to subsets of initial input data, with the goal of obtaining information from the dataset that is more informative than the raw dataset. These important features could be the number of peaks that are present in the dataset, the kurtosis of the data or simply the maximum value that was reached within the data. 
 
 The function defined below can be be used to derive such features from the data, a set of 57 functions from which these features are derived are contained in the `.fresh.feat` namespace. A subset of these functions can be used during extraction or changes can be made by the individual user to add or remove functions that are deemed important or insignificant to the specific use-case of interest.   
 
 Syntax: `.fresh.createfeatures[table;aggs;cnames;funcs]`
 
-Inputs: 
-- table: This is a table containing an 'id' column
-- aggs: (type = symbol) This is the 'id' column on which aggregations due to function calculations will be applied.
-- cnames: (type = list of symbols) These are the columns which features are calculated for, they should not include time columns if present or any columns containing text.
-- funcs: (type = dictionary) These are the functions that are applied to the columns (this can be either the entire ```.fresh.feat``` namespace or a subset of the features therein contained.)
+Returns a table keyed by an identifying column containing the features extracted from an input table based on the unique elements of the identifying column.
 
-Return:
-- Returns a table containing the extracted features based on an identifying column from the input table.
+Where
+* `table` is the input table containing numerical values and a leading identifying column
+* `aggs` is the symbol associated with the identifying column from which aggregations will be performed
+* `cnames` these are the columns on which extracted features will be calculated, these columns should contain only numerical values
+* `funcs` this is the dictionary of functions which are applied to the table this can be the entire `.fresh.feat` namespace or a subset therein contained. 
 
 Sample Code:
 ```q 
-/load in freshq library
-q)\l fresh.q
-
-/load hourly amazon stock information 
+q)\l ml/init.q /load in freshq library from $QHOME
+q)/load hourly amazon stock information 
 q)tabinit:{lower[cols x]xcol x}("DTFFFFII";enlist ",") 0:`amzn.us.txt
-
-q)show tabinit:(where 0=var each flip delete date,time from tabinit) _ tabinit
+q)/remove zero variance columns
+q)tabinit:(where 0=var each flip delete date,time from tabinit) _ tabinit
 date       time         open     high     low     close    volume
 -----------------------------------------------------------------
 2017.05.16 16:00:00.000 961      965.48   960.91  964.67   431465
@@ -127,11 +120,10 @@ date       time         open     high     low     close    volume
 2017.05.17 17:00:00.000 957.42   959.64   952.065 952.74   529877
 2017.05.17 18:00:00.000 952.93   956.88   951.11  955.74   431709
 
-/In this example we are only interested in functions that take the data as input (no hyperparameters)
-
+/Define extraction of features which do not take hyperparameters
 q)singleinputfeatures:.fresh.getsingleinputfeatures[]
 
-q)show tabraw:.fresh.createfeatures[tabinit;`date;2_ cols tabinit;singleinputfeatures]
+q)show 6#tabraw:.fresh.createfeatures[tabinit;`date;2_ cols tabinit;singleinputfeatures]
 
 date      | absenergy_open absenergy_high absenergy_low absenergy_close absenergy_volume abssumch..
 ----------| -------------------------------------------------------------------------------------..
@@ -144,14 +136,11 @@ date      | absenergy_open absenergy_high absenergy_low absenergy_close absenerg
 ```
 
 ## Feature Significance
-
-#### `.fresh.significantfeatures`
-
-A number of statistical significance tests are applied to the data to determine if a feature is likely to be useful in the predicting the value of a target vector. The significance test which is applied is dependent on the characteristics of the feature and target respectively, the following table outlines the test which is applied in each case.
+Following the extraction of features from a raw dataset, a number of statistical significance tests can be applied to the data to determine if a feature is likely to be useful in the predicting the value of a target vector. The significance tests which are applied to determine this are dependent on the characteristics of the feature and target respectively, the following table outlines the test which is applied in each case.
 
 |Feature Type       | Target Type       | Significance Test |
 |:------------------|:------------------|:------------------|
-|Binary             | Real              | Kolmogorov-Smirnov|                     
+|Binary             | Real              | Kolmogorov-Smirnov|
 |Binary	            | Binary            | Fisher-Exact      |
 |Real               | Real              | Kendall Tau-b     |
 |Real               | Binary            | Kolmogorov-Smirnov|
@@ -162,13 +151,11 @@ Both the calculation of p-values via the feature significance tests above and th
 
 Syntax: `.fresh.significantfeatures[table;targets]`
 
-Inputs: 
-- table:(type = matrix) matrix representation of the feature extracted table (eg. value table).
-- targets:(type = list) The name of the target vector which is a list of floats/ints/booleans.
+Returns a table containing a reduced number of features from an input table where the p-value calculated via the significance tests met the conditions defined by the BHY procedure.
 
-Return:
-
-- Returns a table containing a reduced number of features where the p-value calculated via the significance tests met the conditions defined by the BHY procedure.
+Where
+* `table` is the unkeyed section of the table produced by the feature creation procedure.
+* `targets` is the target vector associated with the predictions to be made for each of the rows of the table. 
 
 Sample Code:
 ```q
@@ -184,14 +171,11 @@ date      | abssumchange_high countabovemean_open countabovemean_high countbelow
 
 q)-1 "The number of columns in the initial dataset is: ",string count cols tabinit;
 The number of columns in the initial dataset is: 7
-
 q)-1 "The number of columns in the unfiltered dataset is: ",string count cols tabraw;
 The number of columns in the unfiltered dataset is: 201
-
 q)-1 "The number of columns in the filtered dataset is: ",string count cols tabreduced;
 The number of columns in the filtered dataset is: 45
 ```
-Given the demonstration code above taken from the ```Stock_Close_Price_Freshq.ipynb``` notebook, it is clear that feature extraction initially expands the number of available features dramatically and subsequently reduces to only those features deemed statistically relevant to prediction of the elements of the target vector.
 
 ## Fine Tuning
 
@@ -205,6 +189,8 @@ Within a future release functions or an api will be provided to allow this to be
 The functions which are contained in this library are a small subset of the functions which can be applied in a feature extraction pipeline. Provided a user sticks to the template outlined within the fresh.q script any function written in q or leveraging embedPy which follows this template can be applied to the dataset.
 
 As with modifications to the parameter dictionary a function to modify the functions which are called at feature creation will be provided in a later release.
+
+---
 ## Future work
 
 * The majority of functions which are calculated within the `.fresh.createfeatures` and `.fresh.significantfeatures` functions are implemented in their entirety in q, however given the use of signal processing libraries and the need at a fundamental level for complex statistical distributions in a number of the functions embedPy has been utilized in the following;
