@@ -33,8 +33,7 @@ script:
 - tar czf ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz *.q requirements.txt  LICENSE README.md
 - echo "Packaged as ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip"
 -  if [[ "x$QLIC_KC" != "x" ]]; then
-    q freshq/test.q -q;
-    q mlutils/test.q -q;
+    q test.q fresh/tests/ utils/tests/ -q;
   else
     echo No kdb+, no tests;
   fi
