@@ -1,7 +1,8 @@
-.mlutils.loadfile:{$[.z.q;;-1]"Loading ",x;system"l ",.mlutils.path,"/",x;} /mlutils/",x;}
+.utils.loadfile:{$[.z.q;;-1]"Loading ",x;system"l ",.utils.path,"/",x;}
 / attempt to find the path of this file, default to nlp if any problem
-.mlutils.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .mlutils.loadfile};`;""];u;"utils"]}[]
-.mlutils.hpath:hsym`$.mlutils.path
-.mlutils.loadfile"stats.q"
-.mlutils.loadfile"funcs.q"
-.mlutils.loadfile"preprocess.q"
+.utils.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .utils.loadfile};`;""];u;"utils"]}[]
+.utils.hpath:hsym`$.utils.path
+.utils.path
+.utils.loadfile"stats.q"
+.utils.loadfile"funcs.q"
+.utils.loadfile"preprocess.q"
