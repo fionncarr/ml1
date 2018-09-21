@@ -4,6 +4,6 @@
 .utils.hpath:hsym`$.utils.path
 .utils.path
 \pwd
-.utils.loadfile"stats.q"
-.utils.loadfile"funcs.q"
-.utils.loadfile"preprocess.q"
+.utils.loadfile"utils/stats.q"
+.utils.loadfile"utils/funcs.q"
+.utils.loadfile"utils/preprocess.q"
