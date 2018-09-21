@@ -2,8 +2,6 @@
 / attempt to find the path of this file, default to nlp if any problem
 .utils.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .utils.loadfile};`;""];u;"utils"]}[]
 .utils.hpath:hsym`$.utils.path
-.utils.path
-\pwd
-.utils.loadfile"utils/stats.q"
-.utils.loadfile"utils/funcs.q"
-.utils.loadfile"utils/preprocess.q"
+.utils.loadfile"stats.q"
+.utils.loadfile"funcs.q"
+.utils.loadfile"preprocess.q"
