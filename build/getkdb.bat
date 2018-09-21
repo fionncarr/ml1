@@ -7,4 +7,3 @@ set QHOME=%cd%\q
 set PATH=%QHOME%\w64;%PATH%
 where q
 echo .z.K | q -q
-echo "hello"

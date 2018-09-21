@@ -3,6 +3,7 @@
 .utils.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .utils.loadfile};`;""];u;"utils"]}[]
 .utils.hpath:hsym`$.utils.path
 .utils.path
+\pwd
 .utils.loadfile"stats.q"
 .utils.loadfile"funcs.q"
 .utils.loadfile"preprocess.q"
