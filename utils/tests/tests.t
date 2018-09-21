@@ -1,4 +1,4 @@
-\l utils/init.q
+\l ml1/utils/init.q
 
 np:.p.import[`numpy]
 skmetric:.p.import[`sklearn.metrics]
