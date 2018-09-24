@@ -33,7 +33,7 @@ script:
 - tar czf ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.tgz *.q requirements.txt  LICENSE README.md
 - echo "Packaged as ml_$TRAVIS_OS_NAME-$TRAVIS_BRANCH.zip"
 -  if [[ "x$QLIC_KC" != "x" ]]; then
-    wget https://github.com/KxSystems/embedPy/blob/master/test.q;
+    curl -fsSL -o test.q https://github.com/KxSystems/embedpy/raw/master/test.q;
     q test.q fresh/tests/ utils/tests/ ;
 
   else
