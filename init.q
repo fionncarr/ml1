@@ -1,4 +1,4 @@
 /load in all the .q scripts within the ml library
-
-\l ml/utils/init.q
-\l ml/fresh/init.q
+\l loadfunc.q
+.ml.loadfile"utils/init.q"
+.ml.loadfile"fresh/init.q"

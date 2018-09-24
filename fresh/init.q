@@ -1,8 +1,6 @@
-.fresh.loadfile:{$[.z.q;;-1]"Loading ",x;system"l ",.fresh.path,"/",x;} /freshq/",x;}
+.fresh.loadfile:{$[.z.q;;-1]"Loading ",(string x);system"l ",.fresh.path,"/",string x;}
+.fresh.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .fresh.loadfile};`;""];u;"fresh"]}[] 
 / attempts to find the path of this file, defaults to fresh if any problems arise.
-.fresh.path:{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .fresh.loadfile};`;""];u;"fresh"]}[]
-.fresh.hpath:hsym`$.fresh.path
-.fresh.path
-.fresh.loadfile"ts_feature_significance.q"
-.fresh.loadfile"fresh.q"
-.fresh.loadfile"paramdict.q"
+.fresh.loadfile`ts_feature_significance.q
+.fresh.loadfile`fresh.q
+.fresh.loadfile`paramdict.q
