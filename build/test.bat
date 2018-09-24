@@ -1,4 +1,5 @@
 if defined QLIC_KC (
         pip -q install -r requirements.txt
-        q test.q utils\tests fresh\tests -q 
+        curl -fsSL -o test.q https://github.com/KxSystems/embedPy/blob/master/test.q
+        q test.q utils\tests fresh\tests
 )
