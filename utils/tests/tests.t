@@ -1,4 +1,6 @@
-\l utils/init.q
+\l utils/stats.q
+\l utils/funcs.q
+\l utils/preprocess.q
 
 np:.p.import[`numpy]
 skmetric:.p.import[`sklearn.metrics]
