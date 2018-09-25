@@ -23,46 +23,46 @@ xb:010010101011111010110111b
 yb:000000000001000000111000b
 onehotx:`a`p`l`h`j
 
-.ml.arange[2;100;2] ~ `long$np[`:arange][2;100;2]`
+.ml.utils.arange[2;100;2] ~ `long$np[`:arange][2;100;2]`
 
-.ml.arange[2.5;50.2;0.2] ~ np[`:arange][2.5;50.2;0.2]`
-.ml.shape[1 2 3*/:1 2 3] ~ np[`:shape][1 2 3*/:1 2 3]`
-.ml.shape[1 2 3*/:til 10] ~ np[`:shape][1 2 3*/:til 10]`
-.ml.linspace[1;10;9] ~ np[`:linspace][1;10;9]`
-.ml.linspace[-0.2;109;62] ~ np[`:linspace][-0.2;109;62]`
-.ml.range[til 63] ~ 62
+.ml.utils.arange[2.5;50.2;0.2] ~ np[`:arange][2.5;50.2;0.2]`
+.ml.utils.shape[1 2 3*/:1 2 3] ~ np[`:shape][1 2 3*/:1 2 3]`
+.ml.utils.shape[1 2 3*/:til 10] ~ np[`:shape][1 2 3*/:til 10]`
+.ml.utils.linspace[1;10;9] ~ np[`:linspace][1;10;9]`
+.ml.utils.linspace[-0.2;109;62] ~ np[`:linspace][-0.2;109;62]`
+.ml.utils.range[til 63] ~ 62
 
-.ml.traintestsplitseed[til 10;1+til 10;0.2;43]~`xtrain`ytrain`xtest`ytest!(0 3 5 8 7 2 6 4;1 4 6 9 8 3 7 5;9 1;10 2)
+.ml.utils.traintestsplitseed[til 10;1+til 10;0.2;43]~`xtrain`ytrain`xtest`ytest!(0 3 5 8 7 2 6 4;1 4 6 9 8 3 7 5;9 1;10 2)
 
-.ml.dtypes[tabtest] ~`x`x1`x2`x3`x4!(11h;7h;7h;19h;9h)
-.ml.enum[tabtest] ~ update x:til 10 from tabtest
+.ml.utils.dtypes[tabtest] ~`x`x1`x2`x3`x4!(11h;7h;7h;19h;9h)
+.ml.utils.enum[tabtest] ~ update x:til 10 from tabtest
 
-.ml.accuracy[x;y] ~ skmetric[`:accuracy_score][x;y]` 
-.ml.mse[x;y] ~ skmetric[`:mean_squared_error][x;y]`
-.ml.sse[x;y] ~ sum d*d:x-y
+.ml.utils.accuracy[x;y] ~ skmetric[`:accuracy_score][x;y]` 
+.ml.utils.mse[x;y] ~ skmetric[`:mean_squared_error][x;y]`
+.ml.utils.sse[x;y] ~ sum d*d:x-y
 
-(value .ml.corrmat[plaintab]) ~ "f"$([]1 1 -1 1;1 1 -1 1;-1 -1 1 -1;1 1 -1 1)
-(value .ml.confmat[xb;yb]) ~ (8 12;1 3)
+(value .ml.utils.corrmat[plaintab]) ~ "f"$([]1 1 -1 1;1 1 -1 1;-1 -1 1 -1;1 1 -1 1)
+(value .ml.utils.confmat[xb;yb]) ~ (8 12;1 3)
 
-1 = count distinct min each (value .ml.describe[plaintab]) = value .ml.df2tab .p.import[`pandas][`:DataFrame.describe][.ml.tab2df[plaintab]]
+1 = count distinct min each (value .ml.utils.describe[plaintab]) = value .ml.utils.df2tab .p.import[`pandas][`:DataFrame.describe][.ml.utils.tab2df[plaintab]]
 
-.ml.tscoreeq[x;y]~abs first stats[`:ttest_ind][x;y]`
+.ml.utils.tscoreeq[x;y]~abs first stats[`:ttest_ind][x;y]`
 
-.ml.precision[xb;yb;1b] ~ skmetric[`:precision_score][yb;xb]`
-.ml.sensitivity[xb;yb;1b] ~ skmetric[`:recall_score][yb;xb]`
-.ml.specificity[xb;yb;1b] ~ skmetric[`:recall_score][yb;xb;`pos_label pykw 0]`
+.ml.utils.precision[xb;yb;1b] ~ skmetric[`:precision_score][yb;xb]`
+.ml.utils.sensitivity[xb;yb;1b] ~ skmetric[`:recall_score][yb;xb]`
+.ml.utils.specificity[xb;yb;1b] ~ skmetric[`:recall_score][yb;xb;`pos_label pykw 0]`
 
-.ml.onehot[onehotx] ~ "f"$(1 0 0 0 0;0 0 0 0 1;0 0 0 1 0;0 1 0 0 0;0 0 1 0 0)
+.ml.utils.onehot[onehotx] ~ "f"$(1 0 0 0 0;0 0 0 0 1;0 0 0 1 0;0 1 0 0 0;0 0 1 0 0)
 
 MinMaxScaler[`:fit][plainmat];
 StdScaler[`:fit][plainmat];
-.ml.minmaxscaler[plainmat] ~ "f"$MinMaxScaler[`:transform][plainmat]`
-.ml.stdscaler[plainmat] ~ "f"$StdScaler[`:transform][plainmat]`
+.ml.utils.minmaxscaler[plainmat] ~ "f"$MinMaxScaler[`:transform][plainmat]`
+.ml.utils.stdscaler[plainmat] ~ "f"$StdScaler[`:transform][plainmat]`
 
-(cols .ml.powerset[smalltab;0]) ~ `x`x1`x2`x_x1`x_x2`x1_x2`x_x1_x2
-(cols .ml.polytab[plaintab;3;0]) ~ `x_x1_x2`x_x1_x3`x_x2_x3`x1_x2_x3
+(cols .ml.utils.powerset[smalltab;0]) ~ `x`x1`x2`x_x1`x_x2`x1_x2`x_x1_x2
+(cols .ml.utils.polytab[plaintab;3;0]) ~ `x_x1_x2`x_x1_x3`x_x2_x3`x1_x2_x3
 
-.ml.tablerolldrop[plaintab;`x;2] ~ ([]`t5`t5;1 2;-1 -2;0.4 0.5)
+.ml.utils.tablerolldrop[plaintab;`x;2] ~ ([]`t5`t5;1 2;-1 -2;0.4 0.5)
 
-.ml.checknulls[nulltab] ~ `x1`x3`x5
-(cols .ml.dropconstant[nulltab]) ~ `x`x1`x2`x3
+.ml.utils.checknulls[nulltab] ~ `x1`x3`x5
+(cols .ml.utils.dropconstant[nulltab]) ~ `x`x1`x2`x3
