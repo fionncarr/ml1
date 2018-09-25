@@ -1,4 +1,6 @@
+\d .ml
+/ bootstrap load ml library
+system"l ",{$[count u:@[{1_string first` vs hsym`$u -3+count u:get .z.s};`;""];u;"ml"]}[],"/ml.q"
 /load in all the .q scripts within the ml library
-\l loadfunc.q
-.ml.loadfile"utils/init.q"
-.ml.loadfile"fresh/init.q"
+loadfile`:utils/init.q
+loadfile`:fresh/init.q
