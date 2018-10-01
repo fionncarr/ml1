@@ -8,7 +8,7 @@ FROM $embedpy_img AS embedpy
 
 FROM embedpy AS ml1
 
-COPY requirements.txt *.q  fresh utils README.md LICENSE /opt/kx/ml1/
+COPY requirements.txt *.q  README.md LICENSE /opt/kx/ml1/
 COPY fresh /opt/kx/ml1/fresh
 COPY utils /opt/kx/ml1/utils
 
